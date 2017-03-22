@@ -1,20 +1,17 @@
-#include <stdio.h>
+#include <stdbool.h>
 #include "lua.h"
 #include <lauxlib.h>
 #include <lualib.h>
 
-int run_lua(const char* script) {
-	lua_State* lua = luaL_newstate();
-	luaL_openlibs(lua);
+const char* run_lua(const char* script) {
+	lua_State* state = luaL_newstate();
+	luaL_openlibs(state);
 
-	int res = luaL_dostring(lua, script);
+	bool success = !luaL_dostring(state, script);
 
-	size_t len = 0;
-	const char* value = lua_tolstring(lua, lua_gettop(lua), &len);
+	const char* value = lua_tostring(state, -1);
 
-	printf("%s\n", value);
+	lua_close(state);
 
-	lua_close(lua);
-
-	return 0;
+	return value;
 }
